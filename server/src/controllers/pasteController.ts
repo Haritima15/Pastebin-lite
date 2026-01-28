@@ -27,3 +27,29 @@ export const createPaste = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getPasteByShortId = async (req: Request, res: Response) => {
+  try {
+    const { shortId } = req.params;
+
+    const paste = await Paste.findOneAndUpdate(
+      { shortId },
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+
+    if (!paste) {
+      return res.status(404).json({ message: "Paste not found" });
+    }
+
+    res.json({
+      content: paste.content,
+      views: paste.views,
+      createdAt: paste.createdAt
+    });
+  } catch (error) {
+    console.error("Get paste error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+

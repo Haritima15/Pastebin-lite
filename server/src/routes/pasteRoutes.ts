@@ -1,8 +1,12 @@
 import express from "express";
-import { createPaste } from "../controllers/pasteController";
+import {
+  createPaste,
+  getPasteByShortId
+} from "../controllers/pasteController";
 
 const router = express.Router();
 
 router.post("/paste", createPaste);
+router.get("/:shortId", getPasteByShortId);
 
 export default router;
