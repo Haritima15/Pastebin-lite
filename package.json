@@ -1,0 +1,5 @@
+{
+  "name": "pastebin",
+  "private": true,
+  "packageManager": "pnpm@8.15.0"
+}
