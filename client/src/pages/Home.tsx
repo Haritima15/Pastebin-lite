@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createPaste } from "../services/api";
 
 const Home = () => {
@@ -6,7 +7,8 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [maxViews, setMaxViews] = useState<number | "">("");
   const [ttlSeconds, setTtlSeconds] = useState<number | "">("");
-
+  
+  const navigate = useNavigate();
 
   const handleCreate = async () => {
   try {
@@ -17,13 +19,16 @@ const Home = () => {
     if (ttlSeconds !== "") options.ttl_seconds = ttlSeconds;
 
     const res = await createPaste(content, options);
-    window.location.href = `/${res.id}`;
+
+    // ✅ correct SPA navigation
+    navigate(`/p/${res.id}`);
   } catch {
     alert("Failed to create paste");
   } finally {
     setLoading(false);
   }
 };
+
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
