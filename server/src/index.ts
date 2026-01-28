@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import pasteRoutes from "./routes/pasteRoutes";
 import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 connectDB();
+app.use("/api", pasteRoutes);
 
 app.get("/health", (req: Request, res: Response) => {
   res.json({
