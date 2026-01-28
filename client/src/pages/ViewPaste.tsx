@@ -18,6 +18,15 @@ const ViewPaste = () => {
       <h2>Paste</h2>
 
       <pre>{paste.content}</pre>
+      <button
+        onClick={() => {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Link copied to clipboard!");
+        }}
+        >
+        📋 Copy Link
+        </button>
+
 
       <p>👀 Views: {paste.views}</p>
       <p>🕒 Created at: {new Date(paste.createdAt).toLocaleString()}</p>

@@ -7,7 +7,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/paste/:shortId" element={<ViewPaste />} />
+        <Route path="/:shortId" element={<ViewPaste />} />
       </Routes>
     </BrowserRouter>
   );

@@ -9,7 +9,7 @@ const Home = () => {
     try {
       setLoading(true);
       const res = await createPaste(content);
-      window.location.href = `/paste/${res.shortId}`;
+      window.location.href = `/${res.shortId}`;
     } catch (err) {
       alert("Failed to create paste");
     } finally {

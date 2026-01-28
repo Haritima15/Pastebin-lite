@@ -17,7 +17,7 @@ export const createPaste = async (content: string) => {
 };
 
 export const getPaste = async (shortId: string) => {
-  const res = await fetch(`${API_BASE}/${shortId}`);
+  const res = await fetch(`${API_BASE}/paste/${shortId}`);
 
   if (!res.ok) {
     throw new Error("Paste not found");

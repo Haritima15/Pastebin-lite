@@ -7,6 +7,6 @@ import {
 const router = express.Router();
 
 router.post("/paste", createPaste);
-router.get("/:shortId", getPasteByShortId);
+router.get("/paste/:shortId", getPasteByShortId);
 
 export default router;
