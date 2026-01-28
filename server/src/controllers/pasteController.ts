@@ -2,6 +2,20 @@ import { Request, Response } from "express";
 import { nanoid } from "nanoid";
 import Paste from "../models/Paste";
 
+
+const getNow = (req: Request): Date => {
+  if (process.env.TEST_MODE === "1") {
+    const testNow = req.header("x-test-now-ms");
+    if (testNow) {
+      const ms = Number(testNow);
+      if (!Number.isNaN(ms)) {
+        return new Date(ms);
+      }
+    }
+  }
+  return new Date();
+};
+
 export const createPaste = async (req: Request, res: Response) => {
   try {
     const { content, ttl_seconds, max_views } = req.body;
@@ -69,21 +83,45 @@ export const createPaste = async (req: Request, res: Response) => {
 
 
 export const getPasteById = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const paste = await Paste.findOneAndUpdate(
-    { shortId: id },
-    { $inc: { views: 1 } },
-    { new: true }
-  );
+    const paste = await Paste.findOne({ shortId: id });
 
-  if (!paste) {
-    return res.status(404).json({ error: "Paste not found" });
+    // Missing paste
+    if (!paste) {
+      return res.status(404).json({ error: "Paste unavailable" });
+    }
+
+    const now = getNow(req);
+
+    // TTL check
+    if (paste.expiresAt && paste.expiresAt <= now) {
+      return res.status(404).json({ error: "Paste unavailable" });
+    }
+
+    // View limit check (before increment)
+    if (paste.maxViews !== null && paste.views >= paste.maxViews) {
+      return res.status(404).json({ error: "Paste unavailable" });
+    }
+
+    // Increment views (allowed)
+    paste.views += 1;
+    await paste.save();
+
+    // Remaining views calculation
+    const remainingViews =
+      paste.maxViews === null
+        ? null
+        : Math.max(paste.maxViews - paste.views, 0);
+
+    return res.status(200).json({
+      content: paste.content,
+      remaining_views: remainingViews,
+      expires_at: paste.expiresAt
+    });
+  } catch (err) {
+    console.error("Fetch paste error:", err);
+    return res.status(500).json({ error: "internal server error" });
   }
-
-  res.json({
-    content: paste.content,
-    views: paste.views,
-    createdAt: paste.createdAt
-  });
 };
