@@ -4,8 +4,9 @@ export interface IPaste extends Document {
   content: string;
   shortId: string;
   views: number;
+  maxViews: number | null;
+  expiresAt: Date | null;
   createdAt: Date;
-  expiresAt?: Date;
 }
 
 const PasteSchema: Schema = new Schema(
@@ -23,9 +24,14 @@ const PasteSchema: Schema = new Schema(
       type: Number,
       default: 0
     },
+    maxViews: {
+      type: Number,
+      default: null,
+      min: 1
+    },
     expiresAt: {
-      type: Date,
-      default: null
+    type: Date,
+    default: null
     }
   },
   {
